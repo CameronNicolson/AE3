@@ -8,6 +8,6 @@ public class AssEx3 {
 	 */
 	public static void main(String[] args) {
 		SportsCentreGUI display = new SportsCentreGUI();
-		display.setVisible(true);
+		display.setVisible(true); 
 	}
 }
