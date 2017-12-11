@@ -27,6 +27,8 @@ public class SportsCentreGUI extends JFrame implements ActionListener {
 	private final String classesInFile = "ClassesIn.txt";
 	private final String classesOutFile = "ClassesOut.txt";
 	private final String attendancesFile = "AttendancesIn.txt";
+
+	private FitnessProgram fitnessProgram = new FitnessProgram();
 	
 	/**
 	 * Constructor for AssEx3GUI class
@@ -41,6 +43,7 @@ public class SportsCentreGUI extends JFrame implements ActionListener {
 		layoutTop();
 		layoutBottom();
 		// more code needed here
+		this.initLadiesDay();
 	}
 
 	/**
@@ -48,7 +51,50 @@ public class SportsCentreGUI extends JFrame implements ActionListener {
 	 * using data from the file ClassesIn.txt
 	 */
 	public void initLadiesDay() {
-	    // your code here
+		this.processInputFile(0);
+	}
+
+	public void processInputFile(int fileType) {
+		Scanner preparedFile = this.openInputFile(0);
+		if(preparedFile == null) return; 
+
+		if(fileType == 0) {
+			this.addFitnessClasses(preparedFile);
+		}
+
+	}
+
+	public void addFitnessClasses(Scanner file) {
+		try {
+
+		    while (file.hasNext()) {
+			    String fitClassId = file.next();
+			    String fitClassName = file.next();
+			    String fitClassTutor = file.next();
+			    int fitClassStartTime = Integer.parseInt(file.next());
+				// FitnessClass test = ;
+		    	this.fitnessProgram.insertFitnessClass(new FitnessClass(fitClassId, fitClassName, fitClassTutor, fitClassStartTime));
+		    }
+
+		} catch(Throwable t) {
+			String errorString = String.format("Problem reading from file %s. The program will now close.", t.getMessage());
+			JOptionPane.showMessageDialog(this, errorString, "File Not Found", JOptionPane.ERROR_MESSAGE);
+			System.exit(0);
+		}
+
+	}
+
+	public Scanner openInputFile(int fileType) {
+		String inputFilePath = fileType == 0 ? classesInFile : attendancesFile;
+		Scanner scannerIn = null;
+		try { 
+			scannerIn = new Scanner(new File(inputFilePath));
+		} catch(FileNotFoundException e) {
+			String errorString = String.format("Unable to open %s. The program will now close.", inputFilePath);
+			JOptionPane.showMessageDialog(this, errorString, "File Not Found", JOptionPane.ERROR_MESSAGE);
+			System.exit(0);
+		}
+		return scannerIn;
 	}
 
 	/**
