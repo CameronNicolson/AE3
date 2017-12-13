@@ -42,8 +42,8 @@ public class SportsCentreGUI extends JFrame implements ActionListener {
 		add(display, BorderLayout.CENTER);
 		layoutTop();
 		layoutBottom();
-		// more code needed here
 		this.initLadiesDay();
+		this.initAttendances();
 	}
 
 	/**
@@ -51,46 +51,56 @@ public class SportsCentreGUI extends JFrame implements ActionListener {
 	 * using data from the file ClassesIn.txt
 	 */
 	public void initLadiesDay() {
-		this.processInputFile(0);
+		Scanner preparedFile = this.readInputFile(this.classesInFile);
+		this.addFitnessClasses(preparedFile);
+		this.updateDisplay(); 
 	}
 
-	public void processInputFile(int fileType) {
-		Scanner preparedFile = this.openInputFile(0);
-		if(preparedFile == null) return; 
-
-		if(fileType == 0) {
-			this.addFitnessClasses(preparedFile);
-		}
-
-	}
 
 	public void addFitnessClasses(Scanner file) {
 		try {
-
 		    while (file.hasNext()) {
 			    String fitClassId = file.next();
 			    String fitClassName = file.next();
 			    String fitClassTutor = file.next();
-			    int fitClassStartTime = Integer.parseInt(file.next());
-				// FitnessClass test = ;
-		    	this.fitnessProgram.insertFitnessClass(new FitnessClass(fitClassId, fitClassName, fitClassTutor, fitClassStartTime));
+			    int fitClassStartTime = file.nextInt();
+		    	boolean complete = this.fitnessProgram.insertFitnessClass(new FitnessClass(fitClassId, fitClassName, fitClassTutor, fitClassStartTime));
 		    }
-
 		} catch(Throwable t) {
 			String errorString = String.format("Problem reading from file %s. The program will now close.", t.getMessage());
 			JOptionPane.showMessageDialog(this, errorString, "File Not Found", JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}
-
 	}
 
-	public Scanner openInputFile(int fileType) {
-		String inputFilePath = fileType == 0 ? classesInFile : attendancesFile;
+	public void addAttendanceFigures(Scanner file) {
+		try {
+		    while (file.hasNext()) {
+			    String fitClassId = file.next();
+			    int readFigures[] = new int[5];
+			    readFigures[0] = file.nextInt();
+			    readFigures[1] = file.nextInt();
+			    readFigures[2] = file.nextInt();
+				readFigures[3] = file.nextInt(); 
+				readFigures[4] = file.nextInt();
+				FitnessClass contains = this.fitnessProgram.findById(fitClassId);
+				if(contains == null) return;
+				contains.setAttendance(readFigures);
+				System.err.println(contains.getAttendance());
+		    }
+		} catch(Throwable t) {
+			String errorString = String.format("Problem reading from file %s. The program will now close.", t.getMessage());
+			JOptionPane.showMessageDialog(this, errorString, "File Not Found", JOptionPane.ERROR_MESSAGE);
+			System.exit(0);
+		}
+	}
+
+	public Scanner readInputFile(String filePath) {
 		Scanner scannerIn = null;
 		try { 
-			scannerIn = new Scanner(new File(inputFilePath));
+			scannerIn = new Scanner(new File(filePath));
 		} catch(FileNotFoundException e) {
-			String errorString = String.format("Unable to open %s. The program will now close.", inputFilePath);
+			String errorString = String.format("Unable to open %s. The program will now close.", filePath);
 			JOptionPane.showMessageDialog(this, errorString, "File Not Found", JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}
@@ -102,14 +112,29 @@ public class SportsCentreGUI extends JFrame implements ActionListener {
 	 * from the file AttendancesIn.txt
 	 */
 	public void initAttendances() {
-	    // your code here
+	    Scanner preparedFile = this.readInputFile(attendancesFile);
+	    this.addAttendanceFigures(preparedFile);
 	}
 
 	/**
 	 * Instantiates timetable display and adds it to GUI
 	 */
 	public void updateDisplay() {
-	    // your code here
+		String timetable = this.buildTimetable();
+		this.display.setText(timetable);
+	}
+
+	public String buildTimetable() {
+		String strOutput = "";
+		int beginTime = 9;
+		for(FitnessClass fitClass : this.fitnessProgram.getProgramArr()) {
+			if(fitClass != null) {
+			    strOutput += String.format("%-5s %-5s", beginTime, (beginTime + 1));
+				strOutput += String.format("%-10s%n", fitClass.getClassname());
+			}
+			beginTime++;
+		}
+		return strOutput;
 	}
 
 	/**
