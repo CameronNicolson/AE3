@@ -13,20 +13,16 @@ public class FitnessClass implements Comparable<FitnessClass> {
 		this.classname = classname;
 		this.tutor = tutor;
 		this.startTime = startTime;
-
-		// rest test
 		this.weeks = 0;
 		this.attendance = null;
-
 	}
 	
 	FitnessClass(){
 		 this.weeks = 0;
 		 this.classname = "";
 		 this.tutor = "";
-		 this.startTime = this.findFreeSlot();
-		 this.id = this.generateClassID();
-		 // rest test
+		 this.startTime = 0;
+		 this.id = "";
 		 this.attendance = null;
 	}
 	
@@ -66,5 +62,9 @@ public class FitnessClass implements Comparable<FitnessClass> {
 
     public int[] getAttendance() {
     	return this.attendance;
+    }
+
+    public void setAttendance(int[] arr) {
+    	this.attendance = arr;
     }
 }
