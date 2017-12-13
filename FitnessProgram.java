@@ -9,25 +9,42 @@ import java.util.*;
 public class FitnessProgram {
 	private FitnessClass [] programArr;
 	final int maxNoClasses = 7;
-	private int noClassesAdded; 
+	private int totFitClasses; 
     
     FitnessProgram() {
         this.programArr = new FitnessClass[7];
-
-        for(int x = 0; x < maxNoClasses; x++) {
-            this.programArr[x] = null;
-            System.err.println(this.programArr[x]);
-        }
-
     }
 
-    public void insertFitnessClass(FitnessClass fitClass) {
+    public boolean insertFitnessClass(FitnessClass fitClass) {
         int x = fitClass.getStartTime() - 9;
-        if(this.programArr[x] == null ) {
-             System.out.printf("OK ADDED: %s %s %s pos %s %n", fitClass.getId(), fitClass.getTutor(), fitClass.getClassname(), x);
-             this.programArr[x] = fitClass;
-             noClassesAdded++;
-        }
-       
+        if(this.programArr[x] != null ) {
+          return false;
+        } 
+
+        this.programArr[x] = fitClass;
+        totFitClasses++;
+        return true;      
     }
+
+    public FitnessClass findById(String query) {
+        FitnessClass match = null;
+        for(FitnessClass fitClass : programArr ) {
+            if(fitClass == null) continue;
+            if(fitClass.getId().equals(query)) {
+                System.err.println("yes it does " + fitClass.getClassname());
+                match = fitClass;
+                break;
+            }
+        }
+        return match;
+    }
+
+    public int getTotFitClasses() {
+        return this.totFitClasses;
+    }
+
+    public FitnessClass[] getProgramArr() {
+        return this.programArr;
+    }
+
 }
