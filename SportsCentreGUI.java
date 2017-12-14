@@ -38,7 +38,7 @@ public class SportsCentreGUI extends JFrame implements ActionListener {
 		setTitle("Boyd-Orr Sports Centre");
 		setSize(700, 300);
 		display = new JTextArea();
-		display.setFont(new Font("Courier", Font.PLAIN, 14));
+		display.setFont(new Font("Monospaced", Font.PLAIN, 14));
 		add(display, BorderLayout.CENTER);
 		layoutTop();
 		layoutBottom();
@@ -121,20 +121,31 @@ public class SportsCentreGUI extends JFrame implements ActionListener {
 	 */
 	public void updateDisplay() {
 		String timetable = this.buildTimetable();
-		this.display.setText(timetable);
+		this.display.append(timetable);
 	}
 
 	public String buildTimetable() {
-		String strOutput = "";
+		int availTimes = this.fitnessProgram.getProgramArr().length;
 		int beginTime = 9;
-		for(FitnessClass fitClass : this.fitnessProgram.getProgramArr()) {
-			if(fitClass != null) {
-			    strOutput += String.format("%-5s %-5s", beginTime, (beginTime + 1));
-				strOutput += String.format("%-10s%n", fitClass.getClassname());
+		String headings = "";
+		String timetableClasses = "";
+		String timetableTutor = "";
+		for(int i=0; i<availTimes;i++) {
+			int timeslot = beginTime + i;
+			int endTime = timeslot + 1; 
+			String runningTime = String.format("%d - %d", timeslot, endTime);
+			headings += String.format("%-14s", runningTime);
+			FitnessClass fitClass = this.fitnessProgram.findByStartTime(timeslot);
+			if( fitClass == null) {
+				timetableClasses += String.format("%-14s", "Available");
+				timetableTutor += String.format("%-14s", "");
+			} else {
+				timetableClasses += String.format("%-14s", fitClass.getClassname());
+				timetableTutor += String.format("%-14s", fitClass.getTutor());
 			}
-			beginTime++;
 		}
-		return strOutput;
+		String timetable = String.format("%s%n%s%n%s", headings, timetableClasses, timetableTutor);
+		return timetable;
 	}
 
 	/**
@@ -207,7 +218,7 @@ public class SportsCentreGUI extends JFrame implements ActionListener {
 	 * Instantiates a new window and displays the attendance report
 	 */
 	public void displayReport() {
-	    // your code here
+		report = new ReportFrame();
 	}
 
 	/**
@@ -223,6 +234,8 @@ public class SportsCentreGUI extends JFrame implements ActionListener {
 	 * @param ae the ActionEvent
 	 */
 	public void actionPerformed(ActionEvent ae) {
-	    // your code here
+	    if(ae.getSource() == this.attendanceButton) {
+	    	this.displayReport();
+	    }
 	}
 }
