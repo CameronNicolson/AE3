@@ -31,7 +31,20 @@ public class FitnessProgram {
         for(FitnessClass fitClass : programArr ) {
             if(fitClass == null) continue;
             if(fitClass.getId().equals(query)) {
-                System.err.println("yes it does " + fitClass.getClassname());
+                System.err.println("yes it equals id = " + fitClass.getClassname());
+                match = fitClass;
+                break;
+            }
+        }
+        return match;
+    }
+
+    public FitnessClass findByStartTime(int t) {
+        FitnessClass match = null;
+        for(FitnessClass fitClass : programArr ) {
+            if(fitClass == null) continue;
+            if(fitClass.getStartTime() == t) {
+                System.err.println("yes it equals start time = " + fitClass.getClassname());
                 match = fitClass;
                 break;
             }
