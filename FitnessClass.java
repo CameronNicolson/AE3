@@ -39,9 +39,36 @@ public class FitnessClass implements Comparable<FitnessClass> {
 	private int findFreeSlot() {
 		return 0;
 	}
-
+	/*
+	* make zero if x == y 
+	* make negative if x < y 
+	* make postive if x > y
+	*/
     public int compareTo(FitnessClass other) {
-	  return 0; // replace with your code
+	    	if(this.averageAttendance() == other.averageAttendance()) {
+	    		return 0;
+	    	}
+	    	if(this.averageAttendance() < other.averageAttendance()) {
+	    		return 1;
+	    	} else {
+	    		return -1;
+	    	}
+    }
+
+	/** 
+	* Find the mean of the attendance numbers
+	* Adds up all the numbers then divides by how many numbers there are 
+	*/
+    public double averageAttendance() {
+    	int count;
+    	double sum = 0;
+    	double average = 0;
+    	int len = this.attendance.length;
+    	for(count=0;count<len;count++) {
+    		sum = sum + this.attendance[count];
+    	}
+    	average = sum / count;
+    	return average;
     }
 
     public String getId() {
