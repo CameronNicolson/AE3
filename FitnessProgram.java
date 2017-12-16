@@ -20,7 +20,6 @@ public class FitnessProgram {
         if(this.programArr[x] != null ) {
           return false;
         } 
-
         this.programArr[x] = fitClass;
         totFitClasses++;
         return true;      
@@ -50,6 +49,31 @@ public class FitnessProgram {
             }
         }
         return match;
+    }
+
+   public FitnessClass[] orderByDescending () {
+        FitnessClass[] sortList = new FitnessClass[this.totFitClasses];
+        int count = 0;
+        for(FitnessClass fitClass : this.programArr) {
+            if(fitClass == null) continue;
+            sortList[count] = fitClass;
+            count++;
+        }
+        Arrays.sort(sortList);
+        return sortList;
+    }
+
+    public double getOverallAttendance() {
+        FitnessClass[] order = this.orderByDescending();
+        int count = 0;
+        double sum = 0;
+        double average = 0;
+        for(FitnessClass fitClass : order) {
+            sum += fitClass.averageAttendance();
+            count++;
+        }
+        average = sum / count;
+        return average;
     }
 
     public int getTotFitClasses() {
