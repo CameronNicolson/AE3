@@ -44,6 +44,12 @@ public class SportsCentreGUI extends JFrame implements ActionListener {
 		layoutBottom();
 		this.initLadiesDay();
 		this.initAttendances();
+		System.err.println("===== Here is sorted attendances =====");
+		FitnessClass [] sort = this.fitnessProgram.orderByDescending();
+		for(FitnessClass fitClass : sort) {
+			System.err.println(fitClass.averageAttendance());
+		}
+		System.err.println("Overall = " +this.fitnessProgram.getOverallAttendance());
 	}
 
 	/**
@@ -114,6 +120,9 @@ public class SportsCentreGUI extends JFrame implements ActionListener {
 	public void initAttendances() {
 	    Scanner preparedFile = this.readInputFile(attendancesFile);
 	    this.addAttendanceFigures(preparedFile);
+	    FitnessClass[] list = this.fitnessProgram.getProgramArr();
+	    FitnessClass test = list[0];
+	    System.err.println("Average attendance is " + test.averageAttendance());
 	}
 
 	/**
