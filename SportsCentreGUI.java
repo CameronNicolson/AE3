@@ -52,6 +52,10 @@ public class SportsCentreGUI extends JFrame implements ActionListener {
 		System.err.println("Overall = " +this.fitnessProgram.getOverallAttendance());
 	}
 
+	public void displayError(String msg, String titlebar) {
+		JOptionPane.showMessageDialog(this, msg, titlebar, JOptionPane.ERROR_MESSAGE);
+	}
+
 	/**
 	 * Creates the FitnessProgram list ordered by start time
 	 * using data from the file ClassesIn.txt
@@ -83,12 +87,7 @@ public class SportsCentreGUI extends JFrame implements ActionListener {
 		try {
 		    while (file.hasNext()) {
 			    String fitClassId = file.next();
-			    int readFigures[] = new int[5];
-			    readFigures[0] = file.nextInt();
-			    readFigures[1] = file.nextInt();
-			    readFigures[2] = file.nextInt();
-				readFigures[3] = file.nextInt(); 
-				readFigures[4] = file.nextInt();
+			    int readFigures[] = {file.nextInt(), file.nextInt(), file.nextInt(), file.nextInt(), file.nextInt()};
 				FitnessClass contains = this.fitnessProgram.findById(fitClassId);
 				if(contains == null) return;
 				contains.setAttendance(readFigures);
@@ -130,27 +129,27 @@ public class SportsCentreGUI extends JFrame implements ActionListener {
 	 */
 	public void updateDisplay() {
 		String timetable = this.buildTimetable();
+		this.display.setText(null);
 		this.display.append(timetable);
 	}
 
 	public String buildTimetable() {
 		int availTimes = this.fitnessProgram.getProgramArr().length;
 		int beginTime = 9;
-		String headings = "";
-		String timetableClasses = "";
-		String timetableTutor = "";
+		String headings, timetableClasses, timetableTutor;
+		headings = timetableClasses = timetableTutor = "";
 		for(int i=0; i<availTimes;i++) {
 			int timeslot = beginTime + i;
 			int endTime = timeslot + 1; 
 			String runningTime = String.format("%d - %d", timeslot, endTime);
-			headings += String.format("%-14s", runningTime);
+			headings += String.format("%-10s", runningTime);
 			FitnessClass fitClass = this.fitnessProgram.findByStartTime(timeslot);
 			if( fitClass == null) {
-				timetableClasses += String.format("%-14s", "Available");
-				timetableTutor += String.format("%-14s", "");
+				timetableClasses += String.format("%-10s", "Available");
+				timetableTutor += String.format("%-10s", "");
 			} else {
-				timetableClasses += String.format("%-14s", fitClass.getClassname());
-				timetableTutor += String.format("%-14s", fitClass.getTutor());
+				timetableClasses += String.format("%-10s", fitClass.getClassname());
+				timetableTutor += String.format("%-10s", fitClass.getTutor());
 			}
 		}
 		String timetable = String.format("%s%n%s%n%s", headings, timetableClasses, timetableTutor);
@@ -209,25 +208,51 @@ public class SportsCentreGUI extends JFrame implements ActionListener {
 		add(bottom, BorderLayout.SOUTH);
 	}
 
+	public boolean isFieldEmpty(String str) {
+		return !str.trim().equals("");
+	}
+
+	public boolean isFormValid() {
+		return  this.isFieldEmpty(this.classIn.getText()) && 
+				this.isFieldEmpty(this.tutorIn.getText());
+	}
+
+	public boolean isListFull() {
+		int currentCount = this.fitnessProgram.getTotFitClasses();
+		int spacesAvailable = this.fitnessProgram.getMaxNoClasses();
+		return currentCount == spacesAvailable;
+	}
+
 	/**
 	 * Processes adding a class
 	 */
 	public void processAdding() {
-	    // your code here
+		if(isListFull()) 
+			this.displayError("Cannot add class when list is already full", "Add class error");
+
+		if(!this.isFormValid()) 
+			this.displayError("Class and Tutor fields must cannot be empty", "Add class error");
+			
 	}
 
 	/**
 	 * Processes deleting a class
 	 */
 	public void processDeletion() {
-	    // your code here
+	    FitnessClass searchResult = this.fitnessProgram.findById(this.idIn.getText());
+	    if(searchResult == null) {
+	    	this.displayError("Failed to delete class. No results matched your term.", "No results found");
+	    	return;
+	    }
+	    this.fitnessProgram.removeFitnessClass(searchResult);
+	    this.updateDisplay();
 	}
 
 	/**
 	 * Instantiates a new window and displays the attendance report
 	 */
 	public void displayReport() {
-		report = new ReportFrame();
+		report = new ReportFrame(fitnessProgram);
 	}
 
 	/**
@@ -245,6 +270,10 @@ public class SportsCentreGUI extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent ae) {
 	    if(ae.getSource() == this.attendanceButton) {
 	    	this.displayReport();
+	    } else if(ae.getSource() == this.deleteButton) {
+	    	this.processDeletion();
+	    } else if(ae.getSource() == this.addButton) {
+	    	this.processAdding();
 	    }
 	}
 }

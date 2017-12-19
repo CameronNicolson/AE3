@@ -94,4 +94,8 @@ public class FitnessClass implements Comparable<FitnessClass> {
     public void setAttendance(int[] arr) {
     	this.attendance = arr;
     }
+
+   	public String toString() {
+   		return getClass().getSimpleName() + "[id=" + this.id + "]";
+	}
 }

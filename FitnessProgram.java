@@ -25,6 +25,14 @@ public class FitnessProgram {
         return true;      
     }
 
+    public boolean removeFitnessClass(FitnessClass fitClass) {
+        int x = fitClass.getStartTime() - 9;
+        if(this.programArr[x] == null) return false;
+        this.programArr[x] = null;
+        totFitClasses--;
+        return true;
+    }
+
     public FitnessClass findById(String query) {
         FitnessClass match = null;
         for(FitnessClass fitClass : programArr ) {
@@ -78,6 +86,10 @@ public class FitnessProgram {
 
     public int getTotFitClasses() {
         return this.totFitClasses;
+    }
+
+    public int getMaxNoClasses() {
+        return this.maxNoClasses;
     }
 
     public FitnessClass[] getProgramArr() {
